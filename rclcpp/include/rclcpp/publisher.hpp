@@ -40,32 +40,20 @@ class Node;
 namespace publisher
 {
 
-/// A publisher publishes messages of any type to a topic.
-class Publisher
+class PublisherBase
 {
-  friend rclcpp::node::Node;
-
 public:
-  RCLCPP_SMART_PTR_DEFINITIONS(Publisher);
+  RCLCPP_SMART_PTR_DEFINITIONS(PublisherBase);
 
-  /// Default constructor.
-  /**
-   * Typically, a publisher is not created through this method, but instead is created through a
-   * call to `Node::create_publisher`.
-   * \param[in] node_handle The corresponding rmw representation of the owner node.
-   * \param[in] publisher_handle The rmw publisher handle corresponding to this publisher.
-   * \param[in] topic The topic that this publisher publishes on.
-   * \param[in] queue_size The maximum number of unpublished messages to queue.
-   */
-  Publisher(
+  PublisherBase(
     std::shared_ptr<rmw_node_t> node_handle,
     rmw_publisher_t * publisher_handle,
-    std::string topic,
+    const std::string & topic,
     size_t queue_size)
   : node_handle_(node_handle), publisher_handle_(publisher_handle),
     intra_process_publisher_handle_(nullptr),
     topic_(topic), queue_size_(queue_size),
-    intra_process_publisher_id_(0), store_intra_process_message_(nullptr)
+    intra_process_publisher_id_(0)
   {
     // Life time of this object is tied to the publisher handle.
     if (rmw_get_gid_for_publisher(publisher_handle_, &rmw_gid_) != RMW_RET_OK) {
@@ -75,18 +63,8 @@ public:
       // *INDENT-ON*
     }
   }
-
-  /// Default destructor.
-  virtual ~Publisher()
+  virtual ~PublisherBase()
   {
-    if (intra_process_publisher_handle_) {
-      if (rmw_destroy_publisher(node_handle_.get(), intra_process_publisher_handle_)) {
-        fprintf(
-          stderr,
-          "Error in destruction of intra process rmw publisher handle: %s\n",
-          rmw_get_error_string_safe());
-      }
-    }
     if (publisher_handle_) {
       if (rmw_destroy_publisher(node_handle_.get(), publisher_handle_) != RMW_RET_OK) {
         fprintf(
@@ -95,80 +73,14 @@ public:
           rmw_get_error_string_safe());
       }
     }
-  }
-
-  /// Send a message to the topic for this publisher.
-  /**
-   * This function is templated on the input message type, MessageT.
-   * \param[in] msg A shared pointer to the message to send.
-   */
-  template<typename MessageT>
-  void
-  publish(std::unique_ptr<MessageT> & msg)
-  {
-    this->do_inter_process_publish<MessageT>(msg.get());
-    if (store_intra_process_message_) {
-      // Take the pointer from the unique_msg, release it and pass as a void *
-      // to the ipm. The ipm should then capture it again as a unique_ptr of
-      // the correct type.
-      // TODO(wjwwood):
-      //   investigate how to transfer the custom deleter (if there is one)
-      //   from the incoming unique_ptr through to the ipm's unique_ptr.
-      //   See: http://stackoverflow.com/questions/11002641/dynamic-casting-for-unique-ptr
-      MessageT * msg_ptr = msg.get();
-      msg.release();
-      uint64_t message_seq;
-      {
-        std::lock_guard<std::mutex> lock(intra_process_publish_mutex_);
-        message_seq =
-          store_intra_process_message_(intra_process_publisher_id_, msg_ptr, typeid(MessageT));
+    if (intra_process_publisher_handle_) {
+      if (rmw_destroy_publisher(node_handle_.get(), intra_process_publisher_handle_)) {
+        fprintf(
+          stderr,
+          "Error in destruction of intra process rmw publisher handle: %s\n",
+          rmw_get_error_string_safe());
       }
-      rcl_interfaces::msg::IntraProcessMessage ipm;
-      ipm.publisher_id = intra_process_publisher_id_;
-      ipm.message_sequence = message_seq;
-      auto status = rmw_publish(intra_process_publisher_handle_, &ipm);
-      if (status != RMW_RET_OK) {
-        // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
-        throw std::runtime_error(
-          std::string("failed to publish intra process message: ") + rmw_get_error_string_safe());
-        // *INDENT-ON*
-      }
-    } else {
-      // Always destroy the message, even if we don't consume it, for consistency.
-      msg.reset();
     }
-  }
-
-  template<typename MessageT>
-  void
-  publish(const std::shared_ptr<MessageT> & msg)
-  {
-    // Avoid allocating when not using intra process.
-    if (!store_intra_process_message_) {
-      // In this case we're not using intra process.
-      return this->do_inter_process_publish(msg.get());
-    }
-    // Otherwise we have to allocate memory in a unique_ptr and pass it along.
-    // TODO(wjwwood):
-    //   The intra process manager should probably also be able to store
-    //   shared_ptr's and do the "smart" thing based on other intra process
-    //   subscriptions. For now call the other publish().
-    std::unique_ptr<MessageT> unique_msg(new MessageT(*msg.get()));
-    return this->publish(unique_msg);
-  }
-
-  template<typename MessageT>
-  void
-  publish(const MessageT & msg)
-  {
-    // Avoid allocating when not using intra process.
-    if (!store_intra_process_message_) {
-      // In this case we're not using intra process.
-      return this->do_inter_process_publish(msg.get());
-    }
-    // Otherwise we have to allocate memory in a unique_ptr and pass it along.
-    std::unique_ptr<MessageT> unique_msg(new MessageT(msg));
-    return this->publish(unique_msg);
   }
 
   /// Get the topic that this publisher publishes on.
@@ -240,10 +152,156 @@ public:
     return result;
   }
 
-  typedef std::function<uint64_t(uint64_t, void *, const std::type_info &)> StoreMessageCallbackT;
+protected:
+  void
+  setup_intra_process(
+    uint64_t intra_process_publisher_id,
+    rmw_publisher_t * intra_process_publisher_handle)
+  {
+    intra_process_publisher_id_ = intra_process_publisher_id;
+    intra_process_publisher_handle_ = intra_process_publisher_handle;
+    // Life time of this object is tied to the publisher handle.
+    auto ret = rmw_get_gid_for_publisher(intra_process_publisher_handle_, &intra_process_rmw_gid_);
+    if (ret != RMW_RET_OK) {
+      // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+      throw std::runtime_error(
+        std::string("failed to create intra process publisher gid: ") +
+        rmw_get_error_string_safe());
+      // *INDENT-ON*
+    }
+  }
+
+  std::shared_ptr<rmw_node_t> node_handle_;
+
+  rmw_publisher_t * publisher_handle_;
+  rmw_publisher_t * intra_process_publisher_handle_;
+
+  std::string topic_;
+  size_t queue_size_;
+
+  uint64_t intra_process_publisher_id_;
+
+  rmw_gid_t rmw_gid_;
+  rmw_gid_t intra_process_rmw_gid_;
+
+};
+
+/// A publisher publishes messages of any type to a topic.
+template<typename MessageT>
+class Publisher : public PublisherBase
+{
+  friend rclcpp::node::Node;
+
+public:
+  RCLCPP_SMART_PTR_DEFINITIONS(Publisher);
+
+  /// Default constructor.
+  /**
+   * Typically, a publisher is not created through this method, but instead is created through a
+   * call to `Node::create_publisher`.
+   * \param[in] node_handle The corresponding rmw representation of the owner node.
+   * \param[in] publisher_handle The rmw publisher handle corresponding to this publisher.
+   * \param[in] topic The topic that this publisher publishes on.
+   * \param[in] queue_size The maximum number of unpublished messages to queue.
+   */
+  Publisher(
+    std::shared_ptr<rmw_node_t> node_handle,
+    rmw_publisher_t * publisher_handle,
+    const std::string & topic,
+    size_t queue_size)
+  : PublisherBase(node_handle, publisher_handle, topic, queue_size),
+    store_intra_process_message_(nullptr)
+  {}
+
+  /// Send a message to the topic for this publisher.
+  /**
+   * This function is templated on the input message type, MessageT.
+   * \param[in] msg A shared pointer to the message to send.
+   */
+  // template<typename MessageT>
+  void
+  publish(std::unique_ptr<MessageT> msg)
+  {
+    this->do_inter_process_publish(msg.get());
+    if (store_intra_process_message_) {
+      // Take the pointer from the unique_msg, release it and pass as a void *
+      // to the ipm. The ipm should then capture it again as a unique_ptr of
+      // the correct type.
+      // TODO(wjwwood):
+      //   investigate how to transfer the custom deleter (if there is one)
+      //   from the incoming unique_ptr through to the ipm's unique_ptr.
+      //   See: http://stackoverflow.com/questions/11002641/dynamic-casting-for-unique-ptr
+      uint64_t message_seq;
+      {
+        std::lock_guard<std::mutex> lock(intra_process_publish_mutex_);
+        message_seq = store_intra_process_message_(intra_process_publisher_id_, msg);
+      }
+      rcl_interfaces::msg::IntraProcessMessage ipm;
+      ipm.publisher_id = intra_process_publisher_id_;
+      ipm.message_sequence = message_seq;
+      auto status = rmw_publish(intra_process_publisher_handle_, &ipm);
+      if (status != RMW_RET_OK) {
+        // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+        throw std::runtime_error(
+          std::string("failed to publish intra process message: ") + rmw_get_error_string_safe());
+        // *INDENT-ON*
+      }
+    } else {
+      // Always destroy the message, even if we don't consume it, for consistency.
+      msg.reset();
+    }
+  }
+
+  // template<typename MessageT>
+  void
+  publish(const std::shared_ptr<MessageT> & msg)
+  {
+    // Avoid allocating when not using intra process.
+    if (!store_intra_process_message_) {
+      // In this case we're not using intra process.
+      return this->do_inter_process_publish(msg.get());
+    }
+    // Otherwise we have to allocate memory in a unique_ptr and pass it along.
+    // TODO(wjwwood):
+    //   The intra process manager should probably also be able to store
+    //   shared_ptr's and do the "smart" thing based on other intra process
+    //   subscriptions. For now call the other publish().
+    std::unique_ptr<MessageT> unique_msg(new MessageT(*msg.get()));
+    return this->publish(unique_msg);
+  }
+
+  template<typename PublishMessageT>
+  typename std::enable_if<rosidl_generator_traits::is_message<PublishMessageT>::value>::type
+  publish(const MessageT & msg)
+  {
+    // Avoid allocating when not using intra process.
+    if (!store_intra_process_message_) {
+      // In this case we're not using intra process.
+      return this->do_inter_process_publish(&msg);
+    }
+    // Otherwise we have to allocate memory in a unique_ptr and pass it along.
+    std::unique_ptr<PublishMessageT> unique_msg(new PublishMessageT(msg));
+    return this->publish(unique_msg);
+  }
+
+  // template<typename MessageT>
+  // typename std::enable_if<rosidl_generator_traits::is_message<MessageT>::value>::type
+  // publish(const MessageT & msg)
+  // {
+  //   // Avoid allocating when not using intra process.
+  //   if (!store_intra_process_message_) {
+  //     // In this case we're not using intra process.
+  //     return this->do_inter_process_publish(&msg);
+  //   }
+  //   // Otherwise we have to allocate memory in a unique_ptr and pass it along.
+  //   std::unique_ptr<MessageT> unique_msg(new MessageT(msg));
+  //   return this->publish(unique_msg);
+  // }
+
+  typedef std::function<uint64_t(uint64_t, std::unique_ptr<MessageT>)> StoreMessageCallbackT;
 
 protected:
-  template<typename MessageT>
+  // template<typename MessageT>
   void
   do_inter_process_publish(MessageT * msg)
   {
@@ -278,19 +336,7 @@ protected:
   }
 
 private:
-  std::shared_ptr<rmw_node_t> node_handle_;
-
-  rmw_publisher_t * publisher_handle_;
-  rmw_publisher_t * intra_process_publisher_handle_;
-
-  std::string topic_;
-  size_t queue_size_;
-
-  uint64_t intra_process_publisher_id_;
   StoreMessageCallbackT store_intra_process_message_;
-
-  rmw_gid_t rmw_gid_;
-  rmw_gid_t intra_process_rmw_gid_;
 
   std::mutex intra_process_publish_mutex_;
 

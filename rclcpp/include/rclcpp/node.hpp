@@ -37,6 +37,7 @@
 #include <rclcpp/service.hpp>
 #include <rclcpp/subscription.hpp>
 #include <rclcpp/timer.hpp>
+#include <rclcpp/type_masquerade.hpp>
 
 
 // Forward declaration of ROS middleware class
@@ -99,9 +100,21 @@ public:
    * \return Shared pointer to the created publisher.
    */
   template<typename MessageT>
-  rclcpp::publisher::Publisher::SharedPtr
+  typename rclcpp::publisher::Publisher<MessageT>::SharedPtr
   create_publisher(
     const std::string & topic_name, const rmw_qos_profile_t & qos_profile);
+
+  template<
+    typename MessageT, typename OtherT,
+    typename std::enable_if<
+      !std::is_empty<TypeMasquerade<MessageT, OtherT>>::value
+    >::type * = nullptr
+  >
+  typename rclcpp::publisher::Publisher<MessageT>::SharedPtr
+  create_publisher(
+    const std::string & topic_name, const rmw_qos_profile_t & qos_profile)
+  {}
+
 
   /// Create and return a Subscription.
   /**
@@ -235,7 +248,7 @@ private:
 
   std::map<std::string, rclcpp::parameter::ParameterVariant> parameters_;
 
-  publisher::Publisher::SharedPtr events_publisher_;
+  publisher::Publisher<rcl_interfaces::msg::ParameterEvent>::SharedPtr events_publisher_;
 
   template<typename MessageT>
   typename subscription::Subscription<MessageT>::SharedPtr

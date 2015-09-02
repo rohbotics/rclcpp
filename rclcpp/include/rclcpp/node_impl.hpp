@@ -116,7 +116,7 @@ Node::create_callback_group(
 }
 
 template<typename MessageT>
-publisher::Publisher::SharedPtr
+typename publisher::Publisher<MessageT>::SharedPtr
 Node::create_publisher(
   const std::string & topic_name, const rmw_qos_profile_t & qos_profile)
 {
@@ -132,7 +132,7 @@ Node::create_publisher(
     // *INDENT-ON*
   }
 
-  auto publisher = publisher::Publisher::make_shared(
+  auto publisher = publisher::Publisher<MessageT>::make_shared(
     node_handle_, publisher_handle, topic_name, qos_profile.depth);
 
   if (use_intra_process_comms_) {
@@ -153,7 +153,7 @@ Node::create_publisher(
     rclcpp::intra_process_manager::IntraProcessManager::WeakPtr weak_ipm = intra_process_manager;
     // *INDENT-OFF*
     auto shared_publish_callback =
-      [weak_ipm](uint64_t publisher_id, void * msg, const std::type_info & type_info) -> uint64_t
+      [weak_ipm](uint64_t publisher_id, std::unique_ptr<MessageT> msg) -> uint64_t
     {
       auto ipm = weak_ipm.lock();
       if (!ipm) {
@@ -164,15 +164,7 @@ Node::create_publisher(
       if (!msg) {
         throw std::runtime_error("cannot publisher msg which is a null pointer");
       }
-      auto & message_type_info = typeid(MessageT);
-      if (message_type_info != type_info) {
-        throw std::runtime_error(
-          std::string("published type '") + type_info.name() +
-          "' is incompatible from the publisher type '" + message_type_info.name() + "'");
-      }
-      MessageT * typed_message_ptr = static_cast<MessageT *>(msg);
-      std::unique_ptr<MessageT> unique_msg(typed_message_ptr);
-      uint64_t message_seq = ipm->store_intra_process_message(publisher_id, unique_msg);
+      uint64_t message_seq = ipm->store_intra_process_message(publisher_id, msg);
       return message_seq;
     };
     // *INDENT-ON*
