@@ -44,23 +44,17 @@ public:
   RCLCPP_SMART_PTR_DEFINITIONS(SingleThreadedExecutor);
 
   /// Default constructor. See the default constructor for Executor.
-  SingleThreadedExecutor(memory_strategy::MemoryStrategy::SharedPtr ms =
-    memory_strategy::create_default_strategy())
-  : executor::Executor(ms) {}
+  SingleThreadedExecutor(
+    memory_strategy::MemoryStrategy::SharedPtr ms = memory_strategy::create_default_strategy());
 
   /// Default destrcutor.
-  virtual ~SingleThreadedExecutor() {}
+  virtual ~SingleThreadedExecutor();
 
   /// Single-threaded implementation of spin.
   // This function will block until work comes in, execute it, and keep blocking.
   // It will only be interrupt by a CTRL-C (managed by the global signal handler).
-  void spin()
-  {
-    while (rclcpp::utilities::ok()) {
-      auto any_exec = get_next_executable();
-      execute_any_executable(any_exec);
-    }
-  }
+  void
+  spin();
 
 private:
   RCLCPP_DISABLE_COPY(SingleThreadedExecutor);

@@ -15,27 +15,12 @@
 #ifndef RCLCPP_RCLCPP_CALLBACK_GROUP_HPP_
 #define RCLCPP_RCLCPP_CALLBACK_GROUP_HPP_
 
-#include <atomic>
-#include <string>
-#include <vector>
+#include <memory>
 
-#include <rclcpp/subscription.hpp>
-#include <rclcpp/timer.hpp>
-#include <rclcpp/service.hpp>
-#include <rclcpp/client.hpp>
+#include <rclcpp/macros.hpp>
 
 namespace rclcpp
 {
-
-// Forward declarations for friend statement in class CallbackGroup
-namespace node
-{
-class Node;
-} // namespace node
-namespace executor
-{
-class Executor;
-} // namespace executor
 
 namespace callback_group
 {
@@ -46,52 +31,26 @@ enum class CallbackGroupType
   Reentrant
 };
 
+class CallbackGroup_Impl;
+
 class CallbackGroup
 {
-  friend class rclcpp::node::Node;
-  friend class rclcpp::executor::Executor;
-
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(CallbackGroup);
 
-  CallbackGroup(CallbackGroupType group_type)
-  : type_(group_type), can_be_taken_from_(true)
-  {}
+  CallbackGroup(CallbackGroupType group_type);
+
+  bool
+  can_be_taken_from();
+
+  CallbackGroupType
+  get_callback_group_type();
+
+  CallbackGroup_Impl *
+  get_implementation();
 
 private:
-  RCLCPP_DISABLE_COPY(CallbackGroup);
-
-  void
-  add_subscription(
-    const subscription::SubscriptionBase::SharedPtr subscription_ptr)
-  {
-    subscription_ptrs_.push_back(subscription_ptr);
-  }
-
-  void
-  add_timer(const timer::TimerBase::SharedPtr timer_ptr)
-  {
-    timer_ptrs_.push_back(timer_ptr);
-  }
-
-  void
-  add_service(const service::ServiceBase::SharedPtr service_ptr)
-  {
-    service_ptrs_.push_back(service_ptr);
-  }
-
-  void
-  add_client(const client::ClientBase::SharedPtr client_ptr)
-  {
-    client_ptrs_.push_back(client_ptr);
-  }
-
-  CallbackGroupType type_;
-  std::vector<subscription::SubscriptionBase::WeakPtr> subscription_ptrs_;
-  std::vector<timer::TimerBase::WeakPtr> timer_ptrs_;
-  std::vector<service::ServiceBase::SharedPtr> service_ptrs_;
-  std::vector<client::ClientBase::SharedPtr> client_ptrs_;
-  std::atomic_bool can_be_taken_from_;
+  CallbackGroup_Impl * impl_;
 
 };
 

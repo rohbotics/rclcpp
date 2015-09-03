@@ -15,16 +15,16 @@
 #ifndef RCLCPP_RCLCPP_RCLCPP_HPP_
 #define RCLCPP_RCLCPP_RCLCPP_HPP_
 
-#include <csignal>
-#include <memory>
-
+#include <rclcpp/executors.hpp>
 #include <rclcpp/node.hpp>
 #include <rclcpp/parameter.hpp>
 #include <rclcpp/parameter_client.hpp>
 #include <rclcpp/parameter_service.hpp>
-#include <rclcpp/executors.hpp>
 #include <rclcpp/rate.hpp>
 #include <rclcpp/utilities.hpp>
+
+#include <csignal>
+#include <memory>
 
 namespace rclcpp
 {
@@ -82,7 +82,8 @@ using rclcpp::utilities::sleep_for;
 
 /// Create a default single-threaded executor and execute any immediately available work.
 // \param[in] node_ptr Shared pointer to the node to spin.
-void spin_some(Node::SharedPtr node_ptr)
+void
+spin_some(Node::SharedPtr node_ptr)
 {
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.spin_node_some(node_ptr);
@@ -90,7 +91,8 @@ void spin_some(Node::SharedPtr node_ptr)
 
 /// Create a default single-threaded executor and spin the specified node.
 // \param[in] node_ptr Shared pointer to the node to spin.
-void spin(Node::SharedPtr node_ptr)
+void
+spin(Node::SharedPtr node_ptr)
 {
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node_ptr);

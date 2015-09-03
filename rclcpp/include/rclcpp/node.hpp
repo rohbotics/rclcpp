@@ -24,7 +24,6 @@
 #include <rcl_interfaces/msg/parameter_descriptor.hpp>
 #include <rcl_interfaces/msg/parameter_event.hpp>
 #include <rcl_interfaces/msg/set_parameters_result.hpp>
-#include <rosidl_generator_cpp/message_type_support.hpp>
 
 #include <rclcpp/callback_group.hpp>
 #include <rclcpp/client.hpp>
@@ -38,12 +37,25 @@
 #include <rclcpp/subscription.hpp>
 #include <rclcpp/timer.hpp>
 
-
-// Forward declaration of ROS middleware class
+// Forward declaration of rmw struct
 namespace rmw
 {
 struct rmw_node_t;
 } // namespace rmw
+
+// Forward declaration of the message and service type support template function.
+namespace rosidl_generator_cpp
+{
+
+template<typename T>
+const rosidl_message_type_support_t *
+get_message_type_support_handle();
+
+template<typename T>
+extern const rosidl_service_type_support_t *
+get_service_type_support_handle();
+
+} // namespace rosidl_generator_cpp
 
 namespace rclcpp
 {
@@ -86,7 +98,7 @@ public:
   /// Get the name of the node.
   // \return The name of the node.
   const std::string &
-  get_name() const {return name_; }
+  get_name() const;
 
   /// Create and return a callback group.
   rclcpp::callback_group::CallbackGroup::SharedPtr

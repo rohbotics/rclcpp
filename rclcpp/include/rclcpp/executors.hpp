@@ -15,11 +15,12 @@
 #ifndef RCLCPP_RCLCPP_EXECUTORS_HPP_
 #define RCLCPP_RCLCPP_EXECUTORS_HPP_
 
-#include <future>
 #include <rclcpp/executors/multi_threaded_executor.hpp>
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <rclcpp/node.hpp>
 #include <rclcpp/utilities.hpp>
+
+#include <future>
 
 namespace rclcpp
 {
@@ -30,13 +31,13 @@ using rclcpp::executors::multi_threaded_executor::MultiThreadedExecutor;
 using rclcpp::executors::single_threaded_executor::SingleThreadedExecutor;
 
 template<typename FutureT>
-std::shared_future<FutureT> &
+std::shared_future<FutureT>
 spin_node_until_future_complete(
   rclcpp::executor::Executor & executor, rclcpp::node::Node::SharedPtr node_ptr,
-  std::shared_future<FutureT> & future)
+  std::shared_future<FutureT> future)
 {
   std::future_status status;
-  // TODO(wjwwood): does not work recursively right, can't call spin_node_until_future_complete
+  // TODO(wjwwood): does not work recursively; you can't call spin_node_until_future_complete
   // inside a callback executed by an executor.
   do {
     executor.spin_node_once(node_ptr);

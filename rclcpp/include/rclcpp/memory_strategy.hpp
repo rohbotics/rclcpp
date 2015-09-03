@@ -14,6 +14,7 @@
 
 #ifndef RCLCPP_RCLCPP_MEMORY_STRATEGY_HPP_
 #define RCLCPP_RCLCPP_MEMORY_STRATEGY_HPP_
+
 #include <rclcpp/any_executable.hpp>
 
 namespace rclcpp
@@ -21,11 +22,6 @@ namespace rclcpp
 
 // TODO move HandleType somewhere where it makes sense
 enum class HandleType {subscription_handle, service_handle, client_handle, guard_condition_handle};
-
-namespace executor
-{
-class Executor;
-}
 
 namespace memory_strategy
 {
@@ -38,9 +34,6 @@ namespace memory_strategy
  */
 class MemoryStrategy
 {
-
-  friend class executor::Executor;
-
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(MemoryStrategy);
 
@@ -51,11 +44,8 @@ public:
    * \param[in] The number of handles to borrow.
    * \return Pointer to the allocated handles.
    */
-  virtual void ** borrow_handles(HandleType type, size_t number_of_handles)
-  {
-    (void)type;
-    return static_cast<void **>(alloc(sizeof(void *) * number_of_handles));
-  }
+  virtual void **
+  borrow_handles(HandleType type, size_t number_of_handles);
 
   /// Return the memory borrowed in borrow_handles.
   /**
@@ -63,47 +53,33 @@ public:
    * \param[in] The type of entity that this function is returning.
    * \param[in] Pointer to the handles returned.
    */
-  virtual void return_handles(HandleType type, void ** handles)
-  {
-    (void)type;
-    this->free(handles);
-  }
+  virtual void
+  return_handles(HandleType type, void ** handles);
 
   /// Provide a newly initialized AnyExecutable object.
   // \return Shared pointer to the fresh executable.
-  virtual executor::AnyExecutable::SharedPtr instantiate_next_executable()
-  {
-    return std::make_shared<executor::AnyExecutable>();
-  }
+  virtual executor::AnyExecutable::SharedPtr
+  instantiate_next_executable();
 
   /// Implementation of a general-purpose allocation function.
   /**
    * \param[in] size Number of bytes to allocate.
    * \return Pointer to the allocated chunk of memory.
    */
-  virtual void * alloc(size_t size)
-  {
-    if (size == 0) {
-      return NULL;
-    }
-    return std::malloc(size);
-  }
+  virtual void *
+  alloc(size_t size);
 
   /// Implementation of a general-purpose free.
   /**
    * \param[in] Pointer to deallocate.
    */
-  virtual void free(void * ptr)
-  {
-    return std::free(ptr);
-  }
+  virtual void
+  free(void * ptr);
 };
 
 
-MemoryStrategy::SharedPtr create_default_strategy()
-{
-  return std::make_shared<MemoryStrategy>(MemoryStrategy());
-}
+MemoryStrategy::SharedPtr
+create_default_strategy();
 
 }  /* memory_strategy */
 

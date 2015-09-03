@@ -15,10 +15,10 @@
 #ifndef RCLCPP_RCLCPP_ANY_EXECUTABLE_HPP_
 #define RCLCPP_RCLCPP_ANY_EXECUTABLE_HPP_
 
-#include <memory>
-
 #include <rclcpp/macros.hpp>
 #include <rclcpp/node.hpp>
+
+#include <memory>
 
 namespace rclcpp
 {
@@ -42,7 +42,7 @@ struct AnyExecutable
   rclcpp::node::Node::SharedPtr node;
 };
 
-} /* executor */
-} /* rclcpp */
+} /* namespace executor */
+} /* namespace rclcpp */
 
 #endif
