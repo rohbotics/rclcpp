@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <vector>
 
 #include <rmw/rmw.h>
@@ -34,6 +35,72 @@ namespace executors
 {
 namespace multi_threaded_executor
 {
+
+// 
+class ExecutionThread {
+private:
+  typedef std::function<void()> FunctionT;
+  std::thread thread_;
+  // TODO atomic bool?
+  bool done_ = false;
+  bool launched_ = false;
+  std::queue<FunctionT> work_queue_;
+  std::mutex queue_mutex_;
+  std::shared_ptr<std::condition_variable> cv_;
+  
+
+  void execute() {
+    while (!done_) {
+      // Wait until work might be available (signal by condition variable)
+      if (work_queue_.empty()) {
+        cv_->wait();
+        // TODO: waiting mechanism
+      } else {
+        // Execute the next piece of work 
+        FunctionT current_work;
+        {
+          std::lock_guard<std::mutex> wait_lock(queue_mutex_);
+          current_work = work_queue_.front();
+        }
+        current_work();
+        {
+          std::lock_guard<std::mutex> wait_lock(queue_mutex_);
+          work_queue_.pop();
+        }
+      }
+    }
+  }
+
+public:
+  ExecutionThread(std::shared_ptr<std::condition_variable> cv) :
+    cv_(cv), 
+  {
+  }
+
+  void add_work(FunctionT function) {
+    std::lock_guard<std::mutex> wait_lock(queue_mutex_);
+    work_queue_.push(function);
+  }
+
+  void launch() {
+    if (!launched_) {
+      thread_ = std::thread(
+        [this](){
+          this->execute();
+        }
+      );
+      launched_ = true;
+    }
+  }
+
+  void set_done(bool done) {
+    done_ = done;
+  }
+
+  void join() {
+    thread_.join();
+  }
+};
 
 class MultiThreadedExecutor : public executor::Executor
 {
@@ -97,6 +164,7 @@ private:
 
   std::mutex wait_mutex_;
   size_t number_of_threads_;
+  std::vector<ExecutionThread> exec_threads_;
 
 };
 
