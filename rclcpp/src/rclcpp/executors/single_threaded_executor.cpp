@@ -12,20 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RCLCPP__MEMORY_STRATEGIES_HPP_
-#define RCLCPP__MEMORY_STRATEGIES_HPP_
+#include <rclcpp/executors/single_threaded_executor.hpp>
 
-#include "rclcpp/memory_strategy.hpp"
+using namespace rclcpp::executors::single_threaded_executor;
 
-namespace rclcpp
+SingleThreadedExecutor::SingleThreadedExecutor(memory_strategy::MemoryStrategy::SharedPtr ms)
+: executor::Executor(ms) {}
+
+
+SingleThreadedExecutor::~SingleThreadedExecutor() {}
+
+void
+SingleThreadedExecutor::spin()
 {
-namespace memory_strategies
-{
-
-memory_strategy::MemoryStrategy::SharedPtr
-create_default_strategy();
-
-}  // namespace memory_strategies
-}  // namespace rclcpp
-
-#endif  // RCLCPP__MEMORY_STRATEGIES_HPP_
+  while (rclcpp::utilities::ok()) {
+    auto any_exec = get_next_executable();
+    execute_any_executable(any_exec);
+  }
+}

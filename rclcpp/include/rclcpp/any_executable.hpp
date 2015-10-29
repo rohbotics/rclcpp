@@ -17,8 +17,8 @@
 
 #include <memory>
 
-#include <rclcpp/macros.hpp>
-#include <rclcpp/node.hpp>
+#include "rclcpp/macros.hpp"
+#include "rclcpp/node.hpp"
 
 namespace rclcpp
 {
@@ -28,9 +28,9 @@ namespace executor
 struct AnyExecutable
 {
   RCLCPP_SMART_PTR_DEFINITIONS(AnyExecutable);
-  AnyExecutable()
-  : subscription(0), timer(0), callback_group(0), node(0)
-  {}
+
+  AnyExecutable();
+
   // Only one of the following pointers will be set.
   rclcpp::subscription::SubscriptionBase::SharedPtr subscription;
   rclcpp::subscription::SubscriptionBase::SharedPtr subscription_intra_process;

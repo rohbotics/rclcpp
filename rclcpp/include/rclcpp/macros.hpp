@@ -76,6 +76,7 @@
   { \
     return std::unique_ptr<__VA_ARGS__>(new __VA_ARGS__(std::forward<Args>(args) ...)); \
   }
+
 /// Defines aliases and static functions for using the Class with unique_ptrs.
 #define RCLCPP_UNIQUE_PTR_DEFINITIONS(...) \
   __RCLCPP_UNIQUE_PTR_ALIAS(__VA_ARGS__) \

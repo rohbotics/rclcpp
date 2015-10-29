@@ -12,20 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RCLCPP__MEMORY_STRATEGIES_HPP_
-#define RCLCPP__MEMORY_STRATEGIES_HPP_
+#include "rclcpp/any_executable.hpp"
 
-#include "rclcpp/memory_strategy.hpp"
+using namespace rclcpp::executor;
 
-namespace rclcpp
-{
-namespace memory_strategies
-{
-
-memory_strategy::MemoryStrategy::SharedPtr
-create_default_strategy();
-
-}  // namespace memory_strategies
-}  // namespace rclcpp
-
-#endif  // RCLCPP__MEMORY_STRATEGIES_HPP_
+AnyExecutable::AnyExecutable()
+: subscription(nullptr),
+  subscription_intra_process(nullptr),
+  timer(nullptr),
+  service(nullptr),
+  client(nullptr),
+  callback_group(nullptr),
+  node(nullptr)
+{}

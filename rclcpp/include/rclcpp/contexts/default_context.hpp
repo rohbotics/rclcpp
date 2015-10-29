@@ -29,16 +29,12 @@ class DefaultContext : public rclcpp::context::Context
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(DefaultContext);
 
-  DefaultContext() {}
+  DefaultContext();
 
 };
 
 DefaultContext::SharedPtr
-get_global_default_context()
-{
-  static DefaultContext::SharedPtr default_context = DefaultContext::make_shared();
-  return default_context;
-}
+get_global_default_context();
 
 } // namespace default_context
 } // namespace contexts

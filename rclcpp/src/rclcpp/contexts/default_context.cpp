@@ -12,20 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RCLCPP__MEMORY_STRATEGIES_HPP_
-#define RCLCPP__MEMORY_STRATEGIES_HPP_
+#include "rclcpp/contexts/default_context.hpp"
 
-#include "rclcpp/memory_strategy.hpp"
+using namespace rclcpp::contexts::default_context;
 
-namespace rclcpp
+DefaultContext::DefaultContext()
+{}
+
+DefaultContext::SharedPtr
+rclcpp::contexts::default_context::get_global_default_context()
 {
-namespace memory_strategies
-{
-
-memory_strategy::MemoryStrategy::SharedPtr
-create_default_strategy();
-
-}  // namespace memory_strategies
-}  // namespace rclcpp
-
-#endif  // RCLCPP__MEMORY_STRATEGIES_HPP_
+  static DefaultContext::SharedPtr default_context = DefaultContext::make_shared();
+  return default_context;
+}

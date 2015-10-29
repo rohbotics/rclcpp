@@ -45,87 +45,27 @@ enum ParameterType
 class ParameterVariant
 {
 public:
-  ParameterVariant()
-  : name_("")
-  {
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_NOT_SET;
-  }
-  explicit ParameterVariant(const std::string & name, const bool bool_value)
-  : name_(name)
-  {
-    value_.bool_value = bool_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_BOOL;
-  }
-  explicit ParameterVariant(const std::string & name, const int int_value)
-  : name_(name)
-  {
-    value_.integer_value = int_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
-  }
-  explicit ParameterVariant(const std::string & name, const int64_t int_value)
-  : name_(name)
-  {
-    value_.integer_value = int_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
-  }
-  explicit ParameterVariant(const std::string & name, const float double_value)
-  : name_(name)
-  {
-    value_.double_value = double_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
-  }
-  explicit ParameterVariant(const std::string & name, const double double_value)
-  : name_(name)
-  {
-    value_.double_value = double_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
-  }
-  explicit ParameterVariant(const std::string & name, const std::string & string_value)
-  : name_(name)
-  {
-    value_.string_value = string_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
-  }
-  explicit ParameterVariant(const std::string & name, const char * string_value)
-  : ParameterVariant(name, std::string(string_value)) {}
-  explicit ParameterVariant(const std::string & name, const std::vector<uint8_t> & bytes_value)
-  : name_(name)
-  {
-    value_.bytes_value = bytes_value;
-    value_.type = rcl_interfaces::msg::ParameterType::PARAMETER_BYTES;
-  }
+  ParameterVariant();
+  explicit ParameterVariant(const std::string & name, const bool bool_value);
+  explicit ParameterVariant(const std::string & name, const int int_value);
+  explicit ParameterVariant(const std::string & name, const int64_t int_value);
+  explicit ParameterVariant(const std::string & name, const float double_value);
+  explicit ParameterVariant(const std::string & name, const double double_value);
+  explicit ParameterVariant(const std::string & name, const std::string & string_value);
+  explicit ParameterVariant(const std::string & name, const char * string_value);
+  explicit ParameterVariant(const std::string & name, const std::vector<uint8_t> & bytes_value);
 
-  inline ParameterType get_type() const {return static_cast<ParameterType>(value_.type); }
+  ParameterType
+  get_type() const;
 
-  inline std::string get_type_name() const
-  {
-    switch (get_type()) {
-      case rclcpp::parameter::ParameterType::PARAMETER_BOOL:
-        return "bool";
-      case rclcpp::parameter::ParameterType::PARAMETER_INTEGER:
-        return "integer";
-      case rclcpp::parameter::ParameterType::PARAMETER_DOUBLE:
-        return "double";
-      case rclcpp::parameter::ParameterType::PARAMETER_STRING:
-        return "string";
-      case rclcpp::parameter::ParameterType::PARAMETER_BYTES:
-        return "bytes";
-      case rclcpp::parameter::ParameterType::PARAMETER_NOT_SET:
-        return "not set";
-      default:
-        // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
-        throw std::runtime_error(
-          "Unexpected type from ParameterVariant: " + std::to_string(get_type()));
-        // *INDENT-ON*
-    }
-  }
+  std::string
+  get_type_name() const;
 
-  inline std::string get_name() const & {return name_; }
+  const std::string &
+  get_name() const;
 
-  inline rcl_interfaces::msg::ParameterValue get_parameter_value() const
-  {
-    return value_;
-  }
+  rcl_interfaces::msg::ParameterValue
+  get_parameter_value() const;
 
   template<ParameterType type>
   typename std::enable_if<type == ParameterType::PARAMETER_INTEGER, int64_t>::type
@@ -137,6 +77,7 @@ public:
     }
     return value_.integer_value;
   }
+
   template<ParameterType type>
   typename std::enable_if<type == ParameterType::PARAMETER_DOUBLE, double>::type
   get_value() const
@@ -147,6 +88,7 @@ public:
     }
     return value_.double_value;
   }
+
   template<ParameterType type>
   typename std::enable_if<type == ParameterType::PARAMETER_STRING, const std::string &>::type
   get_value() const
@@ -157,6 +99,7 @@ public:
     }
     return value_.string_value;
   }
+
   template<ParameterType type>
   typename std::enable_if<type == ParameterType::PARAMETER_BOOL, bool>::type
   get_value() const
@@ -167,6 +110,7 @@ public:
     }
     return value_.bool_value;
   }
+
   template<ParameterType type>
   typename std::enable_if<type == ParameterType::PARAMETER_BYTES,
   const std::vector<uint8_t> &>::type
@@ -179,86 +123,29 @@ public:
     return value_.bytes_value;
   }
 
-  int64_t as_int() const {return get_value<ParameterType::PARAMETER_INTEGER>(); }
+  int64_t
+  as_int() const;
 
-  double as_double() const {return get_value<ParameterType::PARAMETER_DOUBLE>(); }
+  double
+  as_double() const;
 
-  const std::string & as_string() const {return get_value<ParameterType::PARAMETER_STRING>(); }
+  const std::string &
+  as_string() const;
 
-  bool as_bool() const {return get_value<ParameterType::PARAMETER_BOOL>(); }
+  bool
+  as_bool() const;
 
-  const std::vector<uint8_t> & as_bytes() const
-  {
-    return get_value<ParameterType::PARAMETER_BYTES>();
-  }
+  const std::vector<uint8_t> &
+  as_bytes() const;
 
-  static ParameterVariant from_parameter(const rcl_interfaces::msg::Parameter & parameter)
-  {
-    switch (parameter.value.type) {
-      case PARAMETER_BOOL:
-        return ParameterVariant(parameter.name, parameter.value.bool_value);
-      case PARAMETER_INTEGER:
-        return ParameterVariant(parameter.name, parameter.value.integer_value);
-      case PARAMETER_DOUBLE:
-        return ParameterVariant(parameter.name, parameter.value.double_value);
-      case PARAMETER_STRING:
-        return ParameterVariant(parameter.name, parameter.value.string_value);
-      case PARAMETER_BYTES:
-        return ParameterVariant(parameter.name, parameter.value.bytes_value);
-      case PARAMETER_NOT_SET:
-        throw std::runtime_error("Type from ParameterValue is not set");
-      default:
-        // TODO(wjwwood): use custom exception
-        // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
-        throw std::runtime_error(
-          "Unexpected type from ParameterVariant: " + std::to_string(parameter.value.type));
-        // *INDENT-ON*
-    }
-  }
+  static ParameterVariant
+  from_parameter(const rcl_interfaces::msg::Parameter & parameter);
 
-  rcl_interfaces::msg::Parameter to_parameter()
-  {
-    rcl_interfaces::msg::Parameter parameter;
-    parameter.name = name_;
-    parameter.value = value_;
-    return parameter;
-  }
+  rcl_interfaces::msg::Parameter
+  to_parameter();
 
-  std::string value_to_string() const
-  {
-    switch (get_type()) {
-      case rclcpp::parameter::ParameterType::PARAMETER_BOOL:
-        return as_bool() ? "true" : "false";
-      case rclcpp::parameter::ParameterType::PARAMETER_INTEGER:
-        return std::to_string(as_int());
-      case rclcpp::parameter::ParameterType::PARAMETER_DOUBLE:
-        return std::to_string(as_double());
-      case rclcpp::parameter::ParameterType::PARAMETER_STRING:
-        return as_string();
-      case rclcpp::parameter::ParameterType::PARAMETER_BYTES:
-        {
-          std::stringstream bytes;
-          bool first_byte = true;
-          bytes << "[" << std::hex;
-          for (auto & byte : as_bytes()) {
-            bytes << "0x" << byte;
-            if (!first_byte) {
-              bytes << ", ";
-            } else {
-              first_byte = false;
-            }
-          }
-          return bytes.str();
-        }
-      case rclcpp::parameter::ParameterType::PARAMETER_NOT_SET:
-        return "not set";
-      default:
-        // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
-        throw std::runtime_error(
-          "Unexpected type from ParameterVariant: " + std::to_string(get_type()));
-        // *INDENT-ON*
-    }
-  }
+  std::string
+  value_to_string() const;
 
 private:
   std::string name_;
@@ -267,15 +154,14 @@ private:
 
 
 /* Return a json encoded version of the parameter intended for a dict. */
-std::string _to_json_dict_entry(const ParameterVariant & param)
-{
-  std::stringstream ss;
-  ss << "\"" << param.get_name() << "\": ";
-  ss << "{\"type\": \"" << param.get_type_name() << "\", ";
-  ss << "\"value\": \"" << param.value_to_string() << "\"}";
-  return ss.str();
-}
+std::string
+_to_json_dict_entry(const ParameterVariant & param);
 
+std::ostream &
+operator<<(std::ostream & os, const rclcpp::parameter::ParameterVariant & pv);
+
+std::ostream &
+operator<<(std::ostream & os, const std::vector<ParameterVariant> & parameters);
 
 } /* namespace parameter */
 
@@ -283,55 +169,15 @@ std::string _to_json_dict_entry(const ParameterVariant & param)
 
 namespace std
 {
+
 /* Return a json encoded version of the parameter intended for a list. */
-inline std::string to_string(const rclcpp::parameter::ParameterVariant & param)
-{
-  std::stringstream ss;
-  ss << "{\"name\": \"" << param.get_name() << "\", ";
-  ss << "\"type\": \"" << param.get_type_name() << "\", ";
-  ss << "\"value\": \"" << param.value_to_string() << "\"}";
-  return ss.str();
-}
+std::string
+to_string(const rclcpp::parameter::ParameterVariant & param);
 
 /* Return a json encoded version of a vector of parameters, as a string*/
-inline std::string to_string(const std::vector<rclcpp::parameter::ParameterVariant> & parameters)
-{
-  std::stringstream ss;
-  ss << "{";
-  bool first = true;
-  for (const auto & pv : parameters) {
-    if (first == false) {
-      ss << ", ";
-    } else {
-      first = false;
-    }
-    ss << rclcpp::parameter::_to_json_dict_entry(pv);
-  }
-  ss << "}";
-  return ss.str();
-}
+std::string
+to_string(const std::vector<rclcpp::parameter::ParameterVariant> & parameters);
 
 } /* namespace std */
-
-namespace rclcpp
-{
-namespace parameter
-{
-
-std::ostream & operator<<(std::ostream & os, const rclcpp::parameter::ParameterVariant & pv)
-{
-  os << std::to_string(pv);
-  return os;
-}
-
-std::ostream & operator<<(std::ostream & os, const std::vector<ParameterVariant> & parameters)
-{
-  os << std::to_string(parameters);
-  return os;
-}
-
-} /* namespace parameter */
-
-} /* namespace rclcpp */
 
 #endif /* RCLCPP_RCLCPP_PARAMETER_HPP_ */

@@ -259,10 +259,7 @@ private:
   PublisherMap publishers_;
 };
 
-static IntraProcessManagerStateBase::SharedPtr create_default_state()
-{
-  return std::make_shared<IntraProcessManagerState<>>();
-}
+IntraProcessManagerStateBase::SharedPtr create_default_state();
 
 }  // namespace intra_process_manager
 }  // namespace rclcpp

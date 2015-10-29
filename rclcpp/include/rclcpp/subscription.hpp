@@ -58,54 +58,20 @@ public:
     std::shared_ptr<rmw_node_t> node_handle,
     rmw_subscription_t * subscription_handle,
     const std::string & topic_name,
-    bool ignore_local_publications)
-  : intra_process_subscription_handle_(nullptr),
-    node_handle_(node_handle),
-    subscription_handle_(subscription_handle),
-    topic_name_(topic_name),
-    ignore_local_publications_(ignore_local_publications)
-  {
-    // To avoid unused private member warnings.
-    (void)ignore_local_publications_;
-  }
+    bool ignore_local_publications);
 
   /// Default destructor.
-  virtual ~SubscriptionBase()
-  {
-    if (subscription_handle_) {
-      if (rmw_destroy_subscription(node_handle_.get(), subscription_handle_) != RMW_RET_OK) {
-        std::stringstream ss;
-        ss << "Error in destruction of rmw subscription handle: " <<
-          rmw_get_error_string_safe() << '\n';
-        (std::cerr << ss.str()).flush();
-      }
-    }
-    if (intra_process_subscription_handle_) {
-      auto ret = rmw_destroy_subscription(node_handle_.get(), intra_process_subscription_handle_);
-      if (ret != RMW_RET_OK) {
-        std::stringstream ss;
-        ss << "Error in destruction of rmw intra process subscription handle: " <<
-          rmw_get_error_string_safe() << '\n';
-        (std::cerr << ss.str()).flush();
-      }
-    }
-  }
+  virtual ~SubscriptionBase();
 
   /// Get the topic that this subscription is subscribed on.
-  const std::string & get_topic_name() const
-  {
-    return this->topic_name_;
-  }
+  const std::string &
+  get_topic_name() const;
 
-  const rmw_subscription_t * get_subscription_handle() const
-  {
-    return subscription_handle_;
-  }
+  const rmw_subscription_t *
+  get_subscription_handle() const;
 
-  const rmw_subscription_t * get_intra_process_subscription_handle() const
-  {
-    return intra_process_subscription_handle_;
-  }
+  const rmw_subscription_t *
+  get_intra_process_subscription_handle() const;
 
   /// Borrow a new message.
   // \return Shared pointer to the fresh message.

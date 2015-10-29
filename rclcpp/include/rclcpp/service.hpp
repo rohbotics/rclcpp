@@ -42,31 +42,15 @@ public:
   ServiceBase(
     std::shared_ptr<rmw_node_t> node_handle,
     rmw_service_t * service_handle,
-    const std::string service_name)
-  : node_handle_(node_handle), service_handle_(service_handle), service_name_(service_name)
-  {}
+    const std::string service_name);
 
-  virtual ~ServiceBase()
-  {
-    if (service_handle_) {
-      if (rmw_destroy_service(service_handle_) != RMW_RET_OK) {
-        std::stringstream ss;
-        ss << "Error in destruction of rmw service_handle_ handle: " <<
-          rmw_get_error_string_safe() << '\n';
-        (std::cerr << ss.str()).flush();
-      }
-    }
-  }
+  virtual ~ServiceBase();
 
-  std::string get_service_name()
-  {
-    return this->service_name_;
-  }
+  std::string
+  get_service_name();
 
-  const rmw_service_t * get_service_handle()
-  {
-    return this->service_handle_;
-  }
+  const rmw_service_t *
+  get_service_handle();
 
   virtual std::shared_ptr<void> create_request() = 0;
   virtual std::shared_ptr<void> create_request_header() = 0;

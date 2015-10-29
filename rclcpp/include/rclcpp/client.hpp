@@ -16,7 +16,6 @@
 #define RCLCPP_RCLCPP_CLIENT_HPP_
 
 #include <future>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -25,8 +24,8 @@
 #include <rmw/error_handling.h>
 #include <rmw/rmw.h>
 
-#include <rclcpp/macros.hpp>
-#include <rclcpp/utilities.hpp>
+#include "rclcpp/macros.hpp"
+#include "rclcpp/utilities.hpp"
 
 namespace rclcpp
 {
@@ -43,29 +42,15 @@ public:
   ClientBase(
     std::shared_ptr<rmw_node_t> node_handle,
     rmw_client_t * client_handle,
-    const std::string & service_name)
-  : node_handle_(node_handle), client_handle_(client_handle), service_name_(service_name)
-  {}
+    const std::string & service_name);
 
-  virtual ~ClientBase()
-  {
-    if (client_handle_) {
-      if (rmw_destroy_client(client_handle_) != RMW_RET_OK) {
-        fprintf(stderr,
-          "Error in destruction of rmw client handle: %s\n", rmw_get_error_string_safe());
-      }
-    }
-  }
+  virtual ~ClientBase();
 
-  const std::string & get_service_name() const
-  {
-    return this->service_name_;
-  }
+  const std::string &
+  get_service_name() const;
 
-  const rmw_client_t * get_client_handle() const
-  {
-    return this->client_handle_;
-  }
+  const rmw_client_t *
+  get_client_handle() const;
 
   virtual std::shared_ptr<void> create_response() = 0;
   virtual std::shared_ptr<void> create_request_header() = 0;

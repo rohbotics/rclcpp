@@ -26,7 +26,6 @@
 #include "rcl_interfaces/msg/parameter_descriptor.hpp"
 #include "rcl_interfaces/msg/parameter_event.hpp"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
-#include "rosidl_generator_cpp/message_type_support.hpp"
 
 #include "rclcpp/callback_group.hpp"
 #include "rclcpp/client.hpp"
@@ -38,7 +37,6 @@
 #include "rclcpp/service.hpp"
 #include "rclcpp/subscription.hpp"
 #include "rclcpp/timer.hpp"
-
 
 // Forward declaration of ROS middleware class
 namespace rmw
@@ -63,7 +61,8 @@ public:
    * \param[in] use_intra_process_comms True to use the optimized intra-process communication
    * pipeline to pass messages between nodes in the same process using shared memory.
    */
-  explicit Node(const std::string & node_name, bool use_intra_process_comms = false);
+  explicit
+  Node(const std::string & node_name, bool use_intra_process_comms = false);
 
   /// Create a node based on the node name and a rclcpp::context::Context.
   /**
@@ -79,7 +78,7 @@ public:
   /// Get the name of the node.
   // \return The name of the node.
   const std::string &
-  get_name() const {return name_; }
+  get_name() const;
 
   /// Create and return a callback group.
   rclcpp::callback_group::CallbackGroup::SharedPtr
@@ -174,7 +173,7 @@ public:
     rclcpp::timer::CallbackType callback,
     rclcpp::callback_group::CallbackGroup::SharedPtr group = nullptr);
 
-  /// Create a timer with a sub-nanosecond precision update period.
+  /// Create a timer.
   /**
    * \param[in] period Time interval between triggers of the callback.
    * \param[in] callback User-defined callback function.
@@ -263,20 +262,8 @@ private:
   publisher::Publisher<rcl_interfaces::msg::ParameterEvent>::SharedPtr events_publisher_;
 };
 
-const rosidl_message_type_support_t * Node::ipm_ts_ =
-  rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::IntraProcessMessage>();
-
 } /* namespace node */
 } /* namespace rclcpp */
-
-#define RCLCPP_REGISTER_NODE(Class) RMW_EXPORT \
-  rclcpp::node::Node::SharedPtr \
-  create_node() \
-  { \
-    return rclcpp::node::Node::SharedPtr(new Class( \
-               rclcpp::contexts::default_context::DefaultContext:: \
-               make_shared())); \
-  }
 
 #ifndef RCLCPP__NODE_IMPL_HPP_
 // Template implementations

@@ -15,8 +15,6 @@
 #ifndef RCLCPP_RCLCPP_CONTEXT_HPP_
 #define RCLCPP_RCLCPP_CONTEXT_HPP_
 
-#include <rclcpp/macros.hpp>
-
 #include <iostream>
 
 #include <memory>
@@ -26,6 +24,8 @@
 #include <unordered_map>
 
 #include <rmw/rmw.h>
+
+#include "rclcpp/macros.hpp"
 
 namespace rclcpp
 {
@@ -38,7 +38,7 @@ class Context
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(Context);
 
-  Context() {}
+  Context();
 
   template<typename SubContext, typename ... Args>
   std::shared_ptr<SubContext>

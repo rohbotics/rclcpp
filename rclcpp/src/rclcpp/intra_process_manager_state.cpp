@@ -12,20 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RCLCPP__MEMORY_STRATEGIES_HPP_
-#define RCLCPP__MEMORY_STRATEGIES_HPP_
+#include "rclcpp/intra_process_manager_state.hpp"
 
-#include "rclcpp/memory_strategy.hpp"
+#include <memory>
 
-namespace rclcpp
+rclcpp::intra_process_manager::IntraProcessManagerStateBase::SharedPtr
+rclcpp::intra_process_manager::create_default_state()
 {
-namespace memory_strategies
-{
-
-memory_strategy::MemoryStrategy::SharedPtr
-create_default_strategy();
-
-}  // namespace memory_strategies
-}  // namespace rclcpp
-
-#endif  // RCLCPP__MEMORY_STRATEGIES_HPP_
+  return std::make_shared<IntraProcessManagerState<>>();
+}

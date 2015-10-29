@@ -12,20 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RCLCPP__MEMORY_STRATEGIES_HPP_
-#define RCLCPP__MEMORY_STRATEGIES_HPP_
+#include "rclcpp/timer.hpp"
 
-#include "rclcpp/memory_strategy.hpp"
+#include <chrono>
 
-namespace rclcpp
+using namespace rclcpp::timer;
+
+TimerBase::TimerBase(std::chrono::nanoseconds period, CallbackType callback)
+: period_(period),
+  callback_(callback),
+  canceled_(false)
+{}
+
+TimerBase::~TimerBase()
+{}
+
+void
+TimerBase::cancel()
 {
-namespace memory_strategies
+  this->canceled_ = true;
+}
+
+void
+TimerBase::execute_callback() const
 {
+  callback_();
+}
 
-memory_strategy::MemoryStrategy::SharedPtr
-create_default_strategy();
-
-}  // namespace memory_strategies
-}  // namespace rclcpp
-
-#endif  // RCLCPP__MEMORY_STRATEGIES_HPP_
+const CallbackType &
+TimerBase::get_callback() const
+{
+  return callback_;
+}
