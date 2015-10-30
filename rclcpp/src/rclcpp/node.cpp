@@ -14,10 +14,36 @@
 
 #include "rclcpp/node.hpp"
 
-using namespace rclcpp::node;
+// Specializations with references to unresolved symbols to delay evalutation until later.
+template<>
+const rosidl_message_type_support_t *
+rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::ParameterEvent>()
+{
+  return rclcpp::type_support::get_parameter_event_msg_type_support();
+}
 
-const rosidl_message_type_support_t * Node::ipm_ts_ =
-  rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::IntraProcessMessage>();
+template<>
+const rosidl_message_type_support_t *
+rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::SetParametersResult>()
+{
+  return rclcpp::type_support::get_set_parameters_result_msg_type_support();
+}
+
+template<>
+const rosidl_message_type_support_t *
+rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::ParameterDescriptor>()
+{
+  return rclcpp::type_support::get_parameter_descriptor_msg_type_support();
+}
+
+template<>
+const rosidl_message_type_support_t *
+rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::ListParametersResult>()
+{
+  return rclcpp::type_support::get_list_parameters_result_msg_type_support();
+}
+
+using namespace rclcpp::node;
 
 Node::Node(const std::string & node_name, bool use_intra_process_comms)
 : Node(

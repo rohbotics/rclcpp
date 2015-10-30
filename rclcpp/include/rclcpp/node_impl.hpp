@@ -31,12 +31,11 @@
 #include <vector>
 
 #include "rcl_interfaces/msg/intra_process_message.hpp"
-#include "rosidl_generator_cpp/message_type_support_decl.hpp"
-#include "rosidl_generator_cpp/service_type_support_decl.hpp"
 
 #include "rclcpp/contexts/default_context.hpp"
 #include "rclcpp/intra_process_manager.hpp"
 #include "rclcpp/parameter.hpp"
+#include "rclcpp/type_support_decl.hpp"
 
 #ifndef RCLCPP__NODE_HPP_
 #include "node.hpp"
@@ -85,7 +84,8 @@ Node::create_publisher(
 
   if (use_intra_process_comms_) {
     rmw_publisher_t * intra_process_publisher_handle = rmw_create_publisher(
-      node_handle_.get(), ipm_ts_, (topic_name + "__intra").c_str(), qos_profile);
+      node_handle_.get(), rclcpp::type_support::get_intra_process_message_msg_type_support(),
+      (topic_name + "__intra").c_str(), qos_profile);
     if (!intra_process_publisher_handle) {
       // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
       throw std::runtime_error(
@@ -185,7 +185,7 @@ Node::create_subscription(
   // Setup intra process.
   if (use_intra_process_comms_) {
     rmw_subscription_t * intra_process_subscriber_handle = rmw_create_subscription(
-      node_handle_.get(), ipm_ts_,
+      node_handle_.get(), rclcpp::type_support::get_intra_process_message_msg_type_support(),
       (topic_name + "__intra").c_str(), qos_profile, false);
     if (!subscriber_handle) {
       // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)

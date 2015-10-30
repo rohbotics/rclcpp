@@ -26,12 +26,11 @@
 #include <rclcpp/rate.hpp>
 #include <rclcpp/utilities.hpp>
 
-// The following headers are necessary inorder to get the correct rmw
+// The following header is necessary inorder to get the correct rmw
 // implementation specific message symbols.
-// Any library or executable using librclcpp must include these headers.
-// However, librclcpp must not include them.
-#include "rosidl_generator_cpp/message_type_support.hpp"
-#include "rosidl_generator_cpp/service_type_support.hpp"
+// Any library or executable using librclcpp must include the header.
+// However, librclcpp must not include it.
+#include "rclcpp/type_support_def.hpp"
 
 namespace rclcpp
 {
