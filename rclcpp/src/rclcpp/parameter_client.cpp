@@ -52,28 +52,31 @@ AsyncParametersClient::get_parameters(
   auto request = std::make_shared<rcl_interfaces::srv::GetParameters::Request>();
   request->names = names;
 
+  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
   get_parameters_client_->async_send_request(
     request,
     [request, promise_result, future_result, &callback](
-      rclcpp::client::Client<rcl_interfaces::srv::GetParameters>::SharedFuture cb_f) {
-        std::vector<rclcpp::parameter::ParameterVariant> parameter_variants;
-        auto & pvalues = cb_f.get()->values;
+      rclcpp::client::Client<rcl_interfaces::srv::GetParameters>::SharedFuture cb_f)
+    {
+      std::vector<rclcpp::parameter::ParameterVariant> parameter_variants;
+      auto & pvalues = cb_f.get()->values;
 
-        for (auto & pvalue : pvalues) {
-          auto i = &pvalue - &pvalues[0];
-          rcl_interfaces::msg::Parameter parameter;
-          parameter.name = request->names[i];
-          parameter.value = pvalue;
-          parameter_variants.push_back(rclcpp::parameter::ParameterVariant::from_parameter(
-            parameter));
-        }
-
-        promise_result->set_value(parameter_variants);
-        if (callback != nullptr) {
-          callback(future_result);
-        }
+      for (auto & pvalue : pvalues) {
+        auto i = &pvalue - &pvalues[0];
+        rcl_interfaces::msg::Parameter parameter;
+        parameter.name = request->names[i];
+        parameter.value = pvalue;
+        parameter_variants.push_back(rclcpp::parameter::ParameterVariant::from_parameter(
+          parameter));
       }
+
+      promise_result->set_value(parameter_variants);
+      if (callback != nullptr) {
+        callback(future_result);
+      }
+    }
   );
+  // *INDENT-ON*
 
   return future_result;
 }
@@ -92,21 +95,24 @@ AsyncParametersClient::get_parameter_types(
   auto request = std::make_shared<rcl_interfaces::srv::GetParameterTypes::Request>();
   request->names = names;
 
+  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
   get_parameter_types_client_->async_send_request(
     request,
     [promise_result, future_result, &callback](
-      rclcpp::client::Client<rcl_interfaces::srv::GetParameterTypes>::SharedFuture cb_f) {
-        std::vector<rclcpp::parameter::ParameterType> types;
-        auto & pts = cb_f.get()->types;
-        for (auto & pt : pts) {
-          pts.push_back(static_cast<rclcpp::parameter::ParameterType>(pt));
-        }
-        promise_result->set_value(types);
-        if (callback != nullptr) {
-          callback(future_result);
-        }
+      rclcpp::client::Client<rcl_interfaces::srv::GetParameterTypes>::SharedFuture cb_f)
+    {
+      std::vector<rclcpp::parameter::ParameterType> types;
+      auto & pts = cb_f.get()->types;
+      for (auto & pt : pts) {
+        pts.push_back(static_cast<rclcpp::parameter::ParameterType>(pt));
       }
+      promise_result->set_value(types);
+      if (callback != nullptr) {
+        callback(future_result);
+      }
+    }
   );
+  // *INDENT-ON*
 
   return future_result;
 }
@@ -124,20 +130,25 @@ AsyncParametersClient::set_parameters(
 
   auto request = std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
 
-  std::transform(parameters.begin(), parameters.end(), std::back_inserter(
-      request->parameters), [](
-      rclcpp::parameter::ParameterVariant p) {return p.to_parameter(); });
+  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+  std::transform(parameters.begin(), parameters.end(), std::back_inserter(request->parameters),
+    [](rclcpp::parameter::ParameterVariant p) {
+      return p.to_parameter();
+    }
+  );
 
   set_parameters_client_->async_send_request(
     request,
     [promise_result, future_result, &callback](
-      rclcpp::client::Client<rcl_interfaces::srv::SetParameters>::SharedFuture cb_f) {
-        promise_result->set_value(cb_f.get()->results);
-        if (callback != nullptr) {
-          callback(future_result);
-        }
+      rclcpp::client::Client<rcl_interfaces::srv::SetParameters>::SharedFuture cb_f)
+    {
+      promise_result->set_value(cb_f.get()->results);
+      if (callback != nullptr) {
+        callback(future_result);
       }
+    }
   );
+  // *INDENT-ON*
 
   return future_result;
 }
@@ -155,20 +166,25 @@ AsyncParametersClient::set_parameters_atomically(
 
   auto request = std::make_shared<rcl_interfaces::srv::SetParametersAtomically::Request>();
 
-  std::transform(parameters.begin(), parameters.end(), std::back_inserter(
-      request->parameters), [](
-      rclcpp::parameter::ParameterVariant p) {return p.to_parameter(); });
+  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+  std::transform(parameters.begin(), parameters.end(), std::back_inserter(request->parameters),
+    [](rclcpp::parameter::ParameterVariant p) {
+      return p.to_parameter();
+    }
+  );
 
   set_parameters_atomically_client_->async_send_request(
     request,
     [promise_result, future_result, &callback](
-      rclcpp::client::Client<rcl_interfaces::srv::SetParametersAtomically>::SharedFuture cb_f) {
-        promise_result->set_value(cb_f.get()->result);
-        if (callback != nullptr) {
-          callback(future_result);
-        }
+      rclcpp::client::Client<rcl_interfaces::srv::SetParametersAtomically>::SharedFuture cb_f)
+    {
+      promise_result->set_value(cb_f.get()->result);
+      if (callback != nullptr) {
+        callback(future_result);
       }
+    }
   );
+  // *INDENT-ON*
 
   return future_result;
 }
@@ -189,16 +205,19 @@ AsyncParametersClient::list_parameters(
   request->prefixes = prefixes;
   request->depth = depth;
 
+  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
   list_parameters_client_->async_send_request(
     request,
     [promise_result, future_result, &callback](
-      rclcpp::client::Client<rcl_interfaces::srv::ListParameters>::SharedFuture cb_f) {
-        promise_result->set_value(cb_f.get()->result);
-        if (callback != nullptr) {
-          callback(future_result);
-        }
+      rclcpp::client::Client<rcl_interfaces::srv::ListParameters>::SharedFuture cb_f)
+    {
+      promise_result->set_value(cb_f.get()->result);
+      if (callback != nullptr) {
+        callback(future_result);
       }
+    }
   );
+  // *INDENT-ON*
 
   return future_result;
 }

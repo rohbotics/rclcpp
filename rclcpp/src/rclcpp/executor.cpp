@@ -64,12 +64,16 @@ Executor::remove_node(rclcpp::node::Node::SharedPtr node_ptr, bool notify)
   weak_nodes_.erase(
     std::remove_if(
       weak_nodes_.begin(), weak_nodes_.end(),
+      // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
       [&](std::weak_ptr<rclcpp::node::Node> & i)
       {
         bool matched = (i.lock() == node_ptr);
         node_removed |= matched;
         return matched;
-      }));
+      }
+      // *INDENT-ON*
+    )
+  );
   if (notify) {
     // If the node was matched and removed, interrupt waiting
     if (node_removed) {
@@ -264,11 +268,16 @@ Executor::wait_for_work(std::chrono::nanoseconds timeout)
   // Clean up any invalid nodes, if they were detected
   if (has_invalid_weak_nodes) {
     weak_nodes_.erase(
-      remove_if(weak_nodes_.begin(), weak_nodes_.end(),
-      [](std::weak_ptr<rclcpp::node::Node> i)
+      remove_if(
+        weak_nodes_.begin(), weak_nodes_.end(),
+        // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+        [](std::weak_ptr<rclcpp::node::Node> i)
         {
           return i.expired();
-        }));
+        }
+        // *INDENT-ON*
+      )
+    );
   }
 
   // Use the number of subscriptions to allocate memory in the handles

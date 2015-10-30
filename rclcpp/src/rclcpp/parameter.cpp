@@ -72,7 +72,8 @@ ParameterVariant::ParameterVariant(const std::string & name, const char * string
 : ParameterVariant(name, std::string(string_value))
 {}
 
-ParameterVariant::ParameterVariant(const std::string & name, const std::vector<uint8_t> & bytes_value)
+ParameterVariant::ParameterVariant(
+  const std::string & name, const std::vector<uint8_t> & bytes_value)
 : name_(name)
 {
   value_.bytes_value = bytes_value;
