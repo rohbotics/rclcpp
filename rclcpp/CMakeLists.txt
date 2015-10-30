@@ -4,8 +4,8 @@ project(rclcpp)
 
 find_package(ament_cmake REQUIRED)
 find_package(rcl_interfaces REQUIRED)
-
 find_package(rmw REQUIRED)
+find_package(rosidl_generator_cpp REQUIRED)
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
@@ -42,6 +42,7 @@ ament_target_dependencies(
   ${PROJECT_NAME}
   "rcl_interfaces"
   "rmw"
+  "rosidl_generator_cpp"
 )
 if(APPLE)
   # Since the rmw_* symbols are unresolved at the time of building librclcpp,
@@ -49,8 +50,9 @@ if(APPLE)
   set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 endif()
 
-ament_export_dependencies(rmw)
 ament_export_dependencies(rcl_interfaces)
+ament_export_dependencies(rmw)
+ament_export_dependencies(rosidl_generator_cpp)
 
 ament_export_include_directories(include)
 
@@ -67,6 +69,7 @@ if(AMENT_ENABLE_TESTING)
     target_include_directories(test_intra_process_manager PUBLIC
       ${rcl_interfaces_INCLUDE_DIRS}
       ${rmw_INCLUDE_DIRS}
+      ${rosidl_generator_cpp_INCLUDE_DIRS}
     )
   endif()
 endif()
