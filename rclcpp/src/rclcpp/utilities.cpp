@@ -83,14 +83,8 @@ signal_handler(int signal_value)
   g_interrupt_condition_variable.notify_all();
 }
 
-namespace rclcpp
-{
-
-namespace utilities
-{
-
 void
-init(int argc, char * argv[])
+rclcpp::utilities::init(int argc, char * argv[])
 {
   (void)argc;
   (void)argv;
@@ -130,13 +124,13 @@ init(int argc, char * argv[])
 }
 
 bool
-ok()
+rclcpp::utilities::ok()
 {
   return ::g_signal_status == 0;
 }
 
 void
-shutdown()
+rclcpp::utilities::shutdown()
 {
   g_signal_status = SIGINT;
   rmw_ret_t status = rmw_trigger_guard_condition(g_sigint_guard_cond_handle);
@@ -148,13 +142,13 @@ shutdown()
 }
 
 rmw_guard_condition_t *
-get_global_sigint_guard_condition()
+rclcpp::utilities::get_global_sigint_guard_condition()
 {
   return ::g_sigint_guard_cond_handle;
 }
 
 bool
-sleep_for(const std::chrono::nanoseconds & nanoseconds)
+rclcpp::utilities::sleep_for(const std::chrono::nanoseconds & nanoseconds)
 {
   // TODO: determine if posix's nanosleep(2) is more efficient here
   std::unique_lock<std::mutex> lock(::g_interrupt_mutex);
@@ -162,6 +156,3 @@ sleep_for(const std::chrono::nanoseconds & nanoseconds)
   // Return true if the timeout elapsed successfully, otherwise false.
   return cvs != std::cv_status::no_timeout;
 }
-
-} /* namespace utilities */
-} /* namespace rclcpp */
