@@ -14,49 +14,52 @@
 
 #include "rclcpp/parameter_client.hpp"
 
+namespace rosidl_generator_cpp
+{
+
 template<>
 const rosidl_service_type_support_t *
-rosidl_generator_cpp::get_service_type_support_handle<rcl_interfaces::srv::GetParameters>()
+get_service_type_support_handle<rcl_interfaces::srv::GetParameters>()
 {
   return rclcpp::type_support::get_get_parameters_srv_type_support();
 }
 
 template<>
 const rosidl_service_type_support_t *
-rosidl_generator_cpp::get_service_type_support_handle<rcl_interfaces::srv::GetParameterTypes>()
+get_service_type_support_handle<rcl_interfaces::srv::GetParameterTypes>()
 {
   return rclcpp::type_support::get_get_parameter_types_srv_type_support();
 }
 
 template<>
 const rosidl_service_type_support_t *
-rosidl_generator_cpp::get_service_type_support_handle<rcl_interfaces::srv::SetParameters>()
+get_service_type_support_handle<rcl_interfaces::srv::SetParameters>()
 {
   return rclcpp::type_support::get_set_parameters_srv_type_support();
 }
 
 template<>
 const rosidl_service_type_support_t *
-rosidl_generator_cpp::get_service_type_support_handle<rcl_interfaces::srv::ListParameters>()
+get_service_type_support_handle<rcl_interfaces::srv::ListParameters>()
 {
   return rclcpp::type_support::get_list_parameters_srv_type_support();
 }
 
 template<>
 const rosidl_service_type_support_t *
-rosidl_generator_cpp::get_service_type_support_handle<rcl_interfaces::srv::DescribeParameters>()
+get_service_type_support_handle<rcl_interfaces::srv::DescribeParameters>()
 {
   return rclcpp::type_support::get_describe_parameters_srv_type_support();
 }
 
 template<>
 const rosidl_service_type_support_t *
-rosidl_generator_cpp::get_service_type_support_handle<
-  rcl_interfaces::srv::SetParametersAtomically
->()
+get_service_type_support_handle<rcl_interfaces::srv::SetParametersAtomically>()
 {
   return rclcpp::type_support::get_set_parameters_atomically_srv_type_support();
 }
+
+}  // namespace rosidl_generator_cpp
 
 using namespace rclcpp::parameter_client;
 

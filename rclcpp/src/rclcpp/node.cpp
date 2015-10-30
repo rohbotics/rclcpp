@@ -15,33 +15,38 @@
 #include "rclcpp/node.hpp"
 
 // Specializations with references to unresolved symbols to delay evalutation until later.
+namespace rosidl_generator_cpp
+{
+
 template<>
 const rosidl_message_type_support_t *
-rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::ParameterEvent>()
+get_message_type_support_handle<rcl_interfaces::msg::ParameterEvent>()
 {
   return rclcpp::type_support::get_parameter_event_msg_type_support();
 }
 
 template<>
 const rosidl_message_type_support_t *
-rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::SetParametersResult>()
+get_message_type_support_handle<rcl_interfaces::msg::SetParametersResult>()
 {
   return rclcpp::type_support::get_set_parameters_result_msg_type_support();
 }
 
 template<>
 const rosidl_message_type_support_t *
-rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::ParameterDescriptor>()
+get_message_type_support_handle<rcl_interfaces::msg::ParameterDescriptor>()
 {
   return rclcpp::type_support::get_parameter_descriptor_msg_type_support();
 }
 
 template<>
 const rosidl_message_type_support_t *
-rosidl_generator_cpp::get_message_type_support_handle<rcl_interfaces::msg::ListParametersResult>()
+get_message_type_support_handle<rcl_interfaces::msg::ListParametersResult>()
 {
   return rclcpp::type_support::get_list_parameters_result_msg_type_support();
 }
+
+}  // namespace rosidl_generator_cpp
 
 using namespace rclcpp::node;
 
