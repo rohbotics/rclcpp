@@ -16,11 +16,11 @@
 
 #include <condition_variable>
 #include <csignal>
+#include <cstring>
 #include <string>
 #include <cstdio>
 #include <mutex>
 
-#include <string.h>
 #include <rmw/error_handling.h>
 #include <rmw/rmw.h>
 
