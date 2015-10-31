@@ -17,17 +17,6 @@
 
 #include "rclcpp/type_support_decl.hpp"
 
-#include "rcl_interfaces/msg/intra_process_message.hpp"
-#include "rcl_interfaces/msg/list_parameters_result.hpp"
-#include "rcl_interfaces/msg/parameter_descriptor.hpp"
-#include "rcl_interfaces/msg/parameter_event.hpp"
-#include "rcl_interfaces/msg/set_parameters_result.hpp"
-#include "rcl_interfaces/srv/describe_parameters.hpp"
-#include "rcl_interfaces/srv/get_parameter_types.hpp"
-#include "rcl_interfaces/srv/get_parameters.hpp"
-#include "rcl_interfaces/srv/list_parameters.hpp"
-#include "rcl_interfaces/srv/set_parameters.hpp"
-#include "rcl_interfaces/srv/set_parameters_atomically.hpp"
 #include "rosidl_generator_cpp/message_type_support.hpp"
 #include "rosidl_generator_cpp/service_type_support.hpp"
 
