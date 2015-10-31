@@ -16,12 +16,14 @@
 #define RCLCPP__MEMORY_STRATEGIES_HPP_
 
 #include "rclcpp/memory_strategy.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
 namespace memory_strategies
 {
 
+RCLCPP_PUBLIC
 memory_strategy::MemoryStrategy::SharedPtr
 create_default_strategy();
 

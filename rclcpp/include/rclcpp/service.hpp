@@ -26,6 +26,7 @@
 
 #include <rclcpp/macros.hpp>
 #include <rclcpp/any_service_callback.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -33,7 +34,7 @@ namespace rclcpp
 namespace service
 {
 
-class ServiceBase
+class RCLCPP_PUBLIC ServiceBase
 {
 
 public:

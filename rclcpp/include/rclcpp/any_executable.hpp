@@ -19,13 +19,14 @@
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
 namespace executor
 {
 
-struct AnyExecutable
+struct RCLCPP_PUBLIC AnyExecutable
 {
   RCLCPP_SMART_PTR_DEFINITIONS(AnyExecutable);
 

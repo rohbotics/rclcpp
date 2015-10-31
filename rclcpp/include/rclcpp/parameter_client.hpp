@@ -33,6 +33,7 @@
 #include "rclcpp/node.hpp"
 #include "rclcpp/parameter.hpp"
 #include "rclcpp/type_support_decl.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -40,7 +41,7 @@ namespace rclcpp
 namespace parameter_client
 {
 
-class AsyncParametersClient
+class RCLCPP_PUBLIC AsyncParametersClient
 {
 
 public:
@@ -108,7 +109,7 @@ private:
   std::string remote_node_name_;
 };
 
-class SyncParametersClient
+class RCLCPP_PUBLIC SyncParametersClient
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(SyncParametersClient);

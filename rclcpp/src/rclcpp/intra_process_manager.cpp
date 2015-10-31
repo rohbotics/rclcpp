@@ -18,6 +18,9 @@ using namespace rclcpp::intra_process_manager;
 
 static std::atomic<uint64_t> _next_unique_id {1};
 
+IntraProcessManager::~IntraProcessManager()
+{}
+
 IntraProcessManager::IntraProcessManager(IntraProcessManagerStateBase::SharedPtr state)
 : state_(state)
 {}

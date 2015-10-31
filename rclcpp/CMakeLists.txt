@@ -47,6 +47,11 @@ ament_target_dependencies(
   "rmw"
   "rosidl_generator_cpp"
 )
+if(WIN32)
+  # Causes the visibility macros to use dllexport rather than dllimport
+  # which is appropriate when building the dll but not consuming it.
+  target_compile_definitions(${PROJECT_NAME} PRIVATE "RCLCPP_BUILDING_DLL")
+endif()
 if(APPLE)
   # Since the rmw_* symbols are unresolved at the time of building librclcpp,
   # tell the linker on OS X to dynamically look them up at runtime.

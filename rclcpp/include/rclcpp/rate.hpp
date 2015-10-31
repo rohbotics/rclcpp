@@ -21,13 +21,14 @@
 
 #include <rclcpp/macros.hpp>
 #include <rclcpp/utilities.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
 namespace rate
 {
 
-class RateBase
+class RCLCPP_PUBLIC RateBase
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS_NOT_COPYABLE(RateBase);

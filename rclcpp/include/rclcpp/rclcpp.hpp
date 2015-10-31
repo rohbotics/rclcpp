@@ -25,6 +25,7 @@
 #include <rclcpp/parameter_service.hpp>
 #include <rclcpp/rate.hpp>
 #include <rclcpp/utilities.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 // The following header is necessary inorder to get the correct rmw
 // implementation specific message symbols.

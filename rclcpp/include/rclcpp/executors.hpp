@@ -21,17 +21,22 @@
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <rclcpp/node.hpp>
 #include <rclcpp/utilities.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
 
 /// Create a default single-threaded executor and execute any immediately available work.
 // \param[in] node_ptr Shared pointer to the node to spin.
-void spin_some(Node::SharedPtr node_ptr);
+RCLCPP_PUBLIC
+void
+spin_some(Node::SharedPtr node_ptr);
 
 /// Create a default single-threaded executor and spin the specified node.
 // \param[in] node_ptr Shared pointer to the node to spin.
-void spin(Node::SharedPtr node_ptr);
+RCLCPP_PUBLIC
+void
+spin(Node::SharedPtr node_ptr);
 
 namespace executors
 {

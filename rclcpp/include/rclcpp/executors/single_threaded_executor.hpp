@@ -28,6 +28,7 @@
 #include "rclcpp/node.hpp"
 #include "rclcpp/utilities.hpp"
 #include "rclcpp/rate.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -38,7 +39,7 @@ namespace single_threaded_executor
 
 /// Single-threaded executor implementation
 // This is the default executor created by rclcpp::spin.
-class SingleThreadedExecutor : public executor::Executor
+class RCLCPP_PUBLIC SingleThreadedExecutor : public executor::Executor
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(SingleThreadedExecutor);

@@ -20,6 +20,8 @@
 #include <rmw/macros.h>
 #include <rmw/rmw.h>
 
+#include "rclcpp/visibility_control.hpp"
+
 namespace rclcpp
 {
 
@@ -31,20 +33,24 @@ namespace utilities
  * \param[in] argc Number of arguments.
  * \param[in] argv Argument vector. Will eventually be used for passing options to rclcpp.
  */
+RCLCPP_PUBLIC
 void
 init(int argc, char * argv[]);
 
 /// Check rclcpp's status.
 // \return True if SIGINT hasn't fired yet, false otherwise.
+RCLCPP_PUBLIC
 bool
 ok();
 
 /// Notify the signal handler and rmw that rclcpp is shutting down.
+RCLCPP_PUBLIC
 void
 shutdown();
 
 
 /// Get a handle to the rmw guard condition that manages the signal handler.
+RCLCPP_PUBLIC
 rmw_guard_condition_t *
 get_global_sigint_guard_condition();
 
@@ -53,6 +59,7 @@ get_global_sigint_guard_condition();
  * \param[in] nanoseconds A std::chrono::duration representing how long to sleep for.
  * \return True if the condition variable did not timeout.
  */
+RCLCPP_PUBLIC
 bool
 sleep_for(const std::chrono::nanoseconds & nanoseconds);
 

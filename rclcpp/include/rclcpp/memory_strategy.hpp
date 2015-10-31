@@ -21,6 +21,7 @@
 #include "rclcpp/any_executable.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -33,7 +34,7 @@ namespace memory_strategy
  * the rmw implementation after the executor waits for work, based on the number of entities that
  * come through.
  */
-class MemoryStrategy
+class RCLCPP_PUBLIC MemoryStrategy
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS_NOT_COPYABLE(MemoryStrategy);

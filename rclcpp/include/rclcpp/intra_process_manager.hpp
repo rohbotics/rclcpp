@@ -32,6 +32,7 @@
 #include "rclcpp/macros.hpp"
 #include "rclcpp/publisher.hpp"
 #include "rclcpp/subscription.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -124,8 +125,12 @@ private:
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(IntraProcessManager);
 
+  RCLCPP_PUBLIC
   explicit IntraProcessManager(
     IntraProcessManagerStateBase::SharedPtr state = create_default_state());
+
+  RCLCPP_PUBLIC
+  virtual ~IntraProcessManager();
 
   /// Register a subscription with the manager, returns subscriptions unique id.
   /* In addition to generating a unique intra process id for the subscription,
@@ -139,6 +144,7 @@ public:
    * \param subscription the Subscription to register.
    * \return an unsigned 64-bit integer which is the subscription's unique id.
    */
+  RCLCPP_PUBLIC
   uint64_t
   add_subscription(subscription::SubscriptionBase::SharedPtr subscription);
 
@@ -147,6 +153,7 @@ public:
    *
    * \param intra_process_subscription_id id of the subscription to remove.
    */
+  RCLCPP_PUBLIC
   void
   remove_subscription(uint64_t intra_process_subscription_id);
 
@@ -191,6 +198,7 @@ public:
    *
    * \param intra_process_publisher_id id of the publisher to remove.
    */
+  RCLCPP_PUBLIC
   void
   remove_publisher(uint64_t intra_process_publisher_id);
 
@@ -321,10 +329,12 @@ public:
   }
 
   /// Return true if the given rmw_gid_t matches any stored Publishers.
+  RCLCPP_PUBLIC
   bool
   matches_any_publishers(const rmw_gid_t * id) const;
 
 private:
+  RCLCPP_PUBLIC
   static uint64_t get_next_unique_id();
 
   IntraProcessManagerStateBase::SharedPtr state_;

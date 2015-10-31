@@ -29,6 +29,7 @@
 #include "rclcpp/memory_strategy.hpp"
 #include "rclcpp/node.hpp"
 #include "rclcpp/utilities.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -45,7 +46,7 @@ namespace executor
  * model.
  * See SingleThreadedExecutor and MultiThreadedExecutor for examples of execution paradigms.
  */
-class Executor
+class RCLCPP_PUBLIC Executor
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS_NOT_COPYABLE(Executor);

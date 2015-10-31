@@ -23,6 +23,7 @@
 #include "rclcpp/service.hpp"
 #include "rclcpp/subscription.hpp"
 #include "rclcpp/timer.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -36,13 +37,13 @@ class Node;
 namespace callback_group
 {
 
-enum class CallbackGroupType
+enum class RCLCPP_PUBLIC CallbackGroupType
 {
   MutuallyExclusive,
   Reentrant
 };
 
-class CallbackGroup
+class RCLCPP_PUBLIC CallbackGroup
 {
   friend class rclcpp::node::Node;
 

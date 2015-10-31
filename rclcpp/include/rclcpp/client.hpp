@@ -26,6 +26,7 @@
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/utilities.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -33,7 +34,7 @@ namespace rclcpp
 namespace client
 {
 
-class ClientBase
+class RCLCPP_PUBLIC ClientBase
 {
 
 public:

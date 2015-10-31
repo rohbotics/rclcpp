@@ -16,6 +16,7 @@
 #define RCLCPP_RCLCPP_CONTEXTS_DEFAULT_CONTEXT_HPP_
 
 #include <rclcpp/context.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -24,7 +25,7 @@ namespace contexts
 namespace default_context
 {
 
-class DefaultContext : public rclcpp::context::Context
+class RCLCPP_PUBLIC DefaultContext : public rclcpp::context::Context
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(DefaultContext);
@@ -33,6 +34,7 @@ public:
 
 };
 
+RCLCPP_PUBLIC
 DefaultContext::SharedPtr
 get_global_default_context();
 

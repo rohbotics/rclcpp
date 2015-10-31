@@ -25,6 +25,8 @@
 #include <rcl_interfaces/msg/parameter_type.hpp>
 #include <rcl_interfaces/msg/parameter_value.hpp>
 
+#include "rclcpp/visibility_control.hpp"
+
 namespace rclcpp
 {
 
@@ -42,7 +44,7 @@ enum ParameterType
 };
 
 // Structure to store an arbitrary parameter with templated get/set methods
-class ParameterVariant
+class RCLCPP_PUBLIC ParameterVariant
 {
 public:
   ParameterVariant();
@@ -154,12 +156,15 @@ private:
 
 
 /* Return a json encoded version of the parameter intended for a dict. */
+RCLCPP_PUBLIC
 std::string
 _to_json_dict_entry(const ParameterVariant & param);
 
+RCLCPP_PUBLIC
 std::ostream &
 operator<<(std::ostream & os, const rclcpp::parameter::ParameterVariant & pv);
 
+RCLCPP_PUBLIC
 std::ostream &
 operator<<(std::ostream & os, const std::vector<ParameterVariant> & parameters);
 
@@ -171,10 +176,12 @@ namespace std
 {
 
 /* Return a json encoded version of the parameter intended for a list. */
+RCLCPP_PUBLIC
 std::string
 to_string(const rclcpp::parameter::ParameterVariant & param);
 
 /* Return a json encoded version of a vector of parameters, as a string*/
+RCLCPP_PUBLIC
 std::string
 to_string(const std::vector<rclcpp::parameter::ParameterVariant> & parameters);
 

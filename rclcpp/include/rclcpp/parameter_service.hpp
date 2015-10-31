@@ -23,6 +23,7 @@
 #include <rclcpp/macros.hpp>
 #include <rclcpp/node.hpp>
 #include <rclcpp/parameter.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 #include <rcl_interfaces/srv/describe_parameters.hpp>
 #include <rcl_interfaces/srv/get_parameters.hpp>
@@ -37,7 +38,7 @@ namespace rclcpp
 namespace parameter_service
 {
 
-class ParameterService
+class RCLCPP_PUBLIC ParameterService
 {
 
 public:

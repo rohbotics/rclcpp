@@ -30,6 +30,7 @@
 #include "rclcpp/allocator/allocator_common.hpp"
 #include "rclcpp/allocator/allocator_deleter.hpp"
 #include "rclcpp/macros.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -43,7 +44,7 @@ class Node;
 namespace publisher
 {
 
-class PublisherBase
+class RCLCPP_PUBLIC PublisherBase
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(PublisherBase);

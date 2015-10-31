@@ -37,6 +37,7 @@
 #include "rclcpp/service.hpp"
 #include "rclcpp/subscription.hpp"
 #include "rclcpp/timer.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 // Forward declaration of ROS middleware class
 namespace rmw
@@ -50,7 +51,7 @@ namespace rclcpp
 namespace node
 {
 /// Node is the single point of entry for creating publishers and subscribers.
-class Node
+class RCLCPP_PUBLIC Node
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(Node);

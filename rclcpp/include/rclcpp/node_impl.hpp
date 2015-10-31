@@ -36,6 +36,7 @@
 #include "rclcpp/intra_process_manager.hpp"
 #include "rclcpp/parameter.hpp"
 #include "rclcpp/type_support_decl.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 #ifndef RCLCPP__NODE_HPP_
 #include "node.hpp"

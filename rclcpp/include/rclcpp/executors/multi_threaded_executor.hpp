@@ -22,6 +22,7 @@
 #include "rclcpp/executor.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/memory_strategies.hpp"
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -30,7 +31,7 @@ namespace executors
 namespace multi_threaded_executor
 {
 
-class MultiThreadedExecutor : public executor::Executor
+class RCLCPP_PUBLIC MultiThreadedExecutor : public executor::Executor
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS(MultiThreadedExecutor);

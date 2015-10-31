@@ -27,6 +27,7 @@
 #include <rclcpp/macros.hpp>
 #include <rclcpp/rate.hpp>
 #include <rclcpp/utilities.hpp>
+#include "rclcpp/visibility_control.hpp"
 
 namespace rclcpp
 {
@@ -36,7 +37,7 @@ namespace timer
 
 using CallbackType = std::function<void()>;
 
-class TimerBase
+class RCLCPP_PUBLIC TimerBase
 {
 
 public:
