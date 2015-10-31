@@ -23,7 +23,7 @@ IntraProcessManager::IntraProcessManager(IntraProcessManagerStateBase::SharedPtr
 {}
 
 uint64_t
-IntraProcessManager::add_subscription(subscription::SubscriptionBase::SharedPtr subscription)
+IntraProcessManager::add_subscription(rclcpp::subscription::SubscriptionBase::SharedPtr subscription)
 {
   auto id = IntraProcessManager::get_next_unique_id();
   state_->add_subscription(id, subscription);
