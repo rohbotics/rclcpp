@@ -117,8 +117,4 @@ get_set_parameters_atomically_srv_type_support();
 }
 }
 
-#if defined(WIN32)
-#include "rclcpp/type_support_def.hpp"
-#endif
-
 #endif  // RCLCPP__TYPE_SUPPORT_DECL_HPP_

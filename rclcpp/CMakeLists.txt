@@ -37,6 +37,9 @@ set(${PROJECT_NAME}_SRCS
   src/rclcpp/timer.cpp
   src/rclcpp/utilities.cpp
 )
+if(WIN32)
+  list(APPEND ${PROJECT_NAME}_SRCS src/rclcpp/windows_helper.cpp)
+endif()
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRCS})
 ament_target_dependencies(
   ${PROJECT_NAME}
