@@ -21,6 +21,10 @@ namespace intra_process_manager
 
 static std::atomic<uint64_t> _next_unique_id {1};
 
+IntraProcessManager::IntraProcessManager()
+: state_(create_default_state())
+{}
+
 IntraProcessManager::IntraProcessManager(
   rclcpp::intra_process_manager::IntraProcessManagerStateBase::SharedPtr state)
 : state_(state)
@@ -33,6 +37,7 @@ uint64_t
 IntraProcessManager::add_subscription(
   rclcpp::subscription::SubscriptionBase::SharedPtr subscription)
 {
+  std::lock_guard<std::mutex> lock(global_lock_);
   auto id = IntraProcessManager::get_next_unique_id();
   state_->add_subscription(id, subscription);
   return id;
@@ -41,18 +46,21 @@ IntraProcessManager::add_subscription(
 void
 IntraProcessManager::remove_subscription(uint64_t intra_process_subscription_id)
 {
+  std::lock_guard<std::mutex> lock(global_lock_);
   state_->remove_subscription(intra_process_subscription_id);
 }
 
 void
 IntraProcessManager::remove_publisher(uint64_t intra_process_publisher_id)
 {
+  std::lock_guard<std::mutex> lock(global_lock_);
   state_->remove_publisher(intra_process_publisher_id);
 }
 
 bool
 IntraProcessManager::matches_any_publishers(const rmw_gid_t * id) const
 {
+  std::lock_guard<std::mutex> lock(global_lock_);
   return state_->matches_any_publishers(id);
 }
 

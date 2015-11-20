@@ -126,8 +126,10 @@ public:
   RCLCPP_SMART_PTR_DEFINITIONS(IntraProcessManager);
 
   RCLCPP_PUBLIC
-  explicit IntraProcessManager(
-    IntraProcessManagerStateBase::SharedPtr state = create_default_state());
+  IntraProcessManager();
+
+  RCLCPP_PUBLIC
+  explicit IntraProcessManager(IntraProcessManagerStateBase::SharedPtr state);
 
   RCLCPP_PUBLIC
   virtual ~IntraProcessManager();
@@ -184,6 +186,7 @@ public:
   add_publisher(typename publisher::Publisher<MessageT, Alloc>::SharedPtr publisher,
     size_t buffer_size = 0)
   {
+    std::lock_guard<std::mutex> lock(global_lock_);
     auto id = IntraProcessManager::get_next_unique_id();
     size_t size = buffer_size > 0 ? buffer_size : publisher->get_queue_size();
     auto mrb = mapped_ring_buffer::MappedRingBuffer<MessageT,
@@ -239,6 +242,7 @@ public:
     uint64_t intra_process_publisher_id,
     std::unique_ptr<MessageT, Deleter> & message)
   {
+    std::lock_guard<std::mutex> lock(global_lock_);
     using MRBMessageAlloc = typename std::allocator_traits<Alloc>::template rebind_alloc<MessageT>;
     using TypedMRB = typename mapped_ring_buffer::MappedRingBuffer<MessageT, MRBMessageAlloc>;
     uint64_t message_seq = 0;
@@ -303,6 +307,7 @@ public:
     uint64_t requesting_subscriptions_intra_process_id,
     std::unique_ptr<MessageT, Deleter> & message)
   {
+    std::lock_guard<std::mutex> lock(global_lock_);
     using MRBMessageAlloc = typename std::allocator_traits<Alloc>::template rebind_alloc<MessageT>;
     using TypedMRB = mapped_ring_buffer::MappedRingBuffer<MessageT, MRBMessageAlloc>;
     message = nullptr;
@@ -339,6 +344,8 @@ private:
   get_next_unique_id();
 
   IntraProcessManagerStateBase::SharedPtr state_;
+
+  mutable std::mutex global_lock_;
 };
 
 }  // namespace intra_process_manager

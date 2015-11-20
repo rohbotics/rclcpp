@@ -178,7 +178,8 @@ public:
   }
 
   mapped_ring_buffer::MappedRingBufferBase::SharedPtr
-  take_intra_process_message(uint64_t intra_process_publisher_id,
+  take_intra_process_message(
+    uint64_t intra_process_publisher_id,
     uint64_t message_sequence_number,
     uint64_t requesting_subscriptions_intra_process_id,
     size_t & size
